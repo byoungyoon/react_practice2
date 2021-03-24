@@ -1,9 +1,9 @@
 import React from 'react';
-import Hello from './Hello.js';
+import Contact from './Contact.js';
 
 function App() {
   return (
-    <Hello number="010">wow</Hello>
+    <Contact />
   );
 }
 
