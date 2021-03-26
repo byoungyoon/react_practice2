@@ -1,96 +1,29 @@
-import React, { Component } from 'react';
-import Form from './components/Form';
-import ToDoItemList from './components/ToDoItemList';
-import ToDoListTemplate from './components/ToDoLlistTemplate';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
-class App extends Component {
-  id = 3
+function App(){
+  const [board, setBoard] = useState({
+    test: '123',
+    boardList: [{boardNo: 1}]
+  });
 
-  state = {
-    input: '',
-    todos: [
-      {id: 0, text: '리엑트 소개', checked:false},
-      {id: 1, text: '리엑트 소개', checked:true},
-      {id:2, text: '리엑트 소개', checked:false}
-    ]
-  }
+  const {test, boardList} = board;
+  
+  useEffect(() => {
+    axios.get('/board/index').then((data) => {
+        if(data.status == 200){
+          console.log(data.data); 
+        }
 
-  handleChange = (e) => {
-    this.setState(
-      {
-        input: e.target.value  
-      }
-    );
-  }
+    }); 
+  }, [])
 
-  handleCreate = () => {
-    const {input, todos} = this.state;
-    this.setState(
-      {
-        input: '',
-        todos : todos.concat({
-          id: this.id ++,
-          text: input,
-          checked: false
-        })
-      }
-    );
-  }
-
-  handleKeyPress = (e) => {
-    if(e.key == 'Enter'){
-      this.handleCreate();
-    }
-  }
-
-  handleToggle = (id) => {
-    const {todos} = this.state;
-
-    const index = todos.findIndex(data => data.id === id);
-    const selected = todos[index];
-
-    const nextTodos = [...todos];
-
-    nextTodos[index] = {
-      ...selected,
-      checked: !selected.checked
-    };
-
-    this.setState({
-      todos : nextTodos
-    });
-  }
-
-  handleRemove = (id) => {
-    const {todos} = this.state;
-    this.setState({
-      todos: todos.filter(todo => todo.id !== id)
-    });
-  }
-
-  render(){
-    const {input, todos} = this.state;
-    const {
-      handleChange,
-      handleCreate,
-      handleKeyPress,
-      handleToggle,
-      handleRemove
-    } = this;
-
-    return(
-      <ToDoListTemplate form={
-        <Form 
-          value={input}
-          onKeyPress={handleKeyPress}
-          onChange={handleChange}
-          onCreate={handleCreate}
-        />}>
-        <ToDoItemList todos={todos} onToggle={handleToggle} onRemove={handleRemove} />
-      </ToDoListTemplate>
-      
-    );
-  }
+  return(
+    <div>
+      <h1>test</h1>
+      <p></p>
+    </div>
+  );
 }
 
 export default App;
