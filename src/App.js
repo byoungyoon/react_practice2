@@ -1,47 +1,46 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import Board from './index/Board';
+import IndexTemplate from './index/IndexTemplate';
 
 function App(){
-  const [board, setBoard] = useState([]);
+  const [board, setBoard] = useState({
+    lastPage: 1,
+    boardList: []
+  });
 
-  const {test, boardList} = board;
+  const [limitPage, setLimitPage] = useState(11);
+  const [boardList, setBoardList] = useState([]);
   
   useEffect(() => {
-    axios.get('/board/index').then((data) => {
-        if(data.status == 200){
-          setBoard(data.data);
+    axios({
+      url: '/board/index/' + limitPage,
+      method: 'GET',
+    }).then((data) => {
+        if(data.status === 200){
+          setBoard({
+            lastPage: data.data.lastPage,
+            boardList: data.data.boardList
+          });
         }
-
     }); 
+
+    setBoardList(board.boardList.filter(data => data.boardNo < limitPage));
   }, [])
+
+  const handleClick = () =>{
+    setLimitPage(limitPage => limitPage + 10);
+    setBoardList(board.boardList.filter(data => data.boardNo < limitPage));
+  }
 
   return(
     <div>
-      <h1>test</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>boardNo</th>
-              <th>boardTitle</th>
-              <th>userId</th>
-              <th>boardCount</th>
-              <th>createDate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              board.map((data) => (
-                <tr key={data.boardNo}>
-                  <td>{data.boardNo}</td>
-                  <td>{data.boardTitle}</td>
-                  <td>{data.userId}</td>
-                  <td>{data.boardCount}</td>
-                  <td>{data.createDate}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+      <IndexTemplate>
+        <Board 
+          boardList={boardList}
+          onClick={handleClick}
+        />
+      </IndexTemplate>
     </div>
   );
 }
