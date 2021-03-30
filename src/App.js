@@ -29,15 +29,14 @@ function App(){
             lastPage: data.data.lastPage,
             boardList: data.data.boardList
           });
-          setBoardList(data.data.boardList.filter(data => data.boardNo < limitPage));
+          setBoardList(board.boardList);
         }
       }); 
   }, [])
 
   const handleClick = () =>{
-    console.log(board);
-    setLimitPage(limitPage => limitPage + 10);
-    setBoardList(board.boardList.filter(data => data.boardNo < limitPage));
+    setLimitPage(limitPage + 10);
+    setBoardList(board.boardList.slice(0, limitPage));
   }
 
   const handleChange = (e) => {
@@ -58,13 +57,31 @@ function App(){
       data: formData
     }).then((data) => {
         if(data.status === 200){
+          setBoardList(
+            boardList.concat({
+              boardTitle: boardTitle,
+              userId: userId,
+            })
+          );
+
           setInputs({
             boardTitle: '',
             userId: ''
           });
           alert('입력하신 데이터가 추가 되었습니다.');
         }
-    }); 
+    });
+  }
+
+  const handleRemove = (boardNo) => {
+    axios({
+      url: '/board/removeBoard/' + boardNo,
+      method: 'GET',
+    }).then((data) => {
+        if(data.status === 200){
+          setBoardList(boardList.filter(data => data.boardNo !== boardNo));
+        }
+      }); 
   }
 
   return(
@@ -80,6 +97,7 @@ function App(){
         <Board 
           boardList={boardList}
           onClick={handleClick}
+          onRemove={handleRemove}
         />
       </IndexTemplate>
     </div>

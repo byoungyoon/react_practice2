@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Board({boardList, onClick}){
+function Board({boardList, onClick, onRemove}){
     return(
         <div>
             <table>
@@ -22,6 +22,13 @@ function Board({boardList, onClick}){
                         <td>{data.userId}</td>
                         <td>{data.createDate}</td>
                         <td>{data.boardCount}</td>
+                        <td>
+                        <button onClick={(e) => {
+                            e.stopPropagation();
+                            onRemove(data.boardNo);
+                        }}>
+                            X
+                        </button></td>
                     </tr>
                     ))
                 }
